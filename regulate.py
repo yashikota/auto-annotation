@@ -1,46 +1,35 @@
+import argparse
 import os
 import glob
 
-# テキストファイルと画像ファイルを探すためのパターンを設定
-# 画像はjpgとpngの両方を探す
-txt_pattern = "*.txt"
-jpg_pattern = "*.jpg"
-png_pattern = "*.png"
+# 引数を解析
+parser = argparse.ArgumentParser()
+parser.add_argument("target_dir")
+args = parser.parse_args()
 
-# テキストファイルと画像ファイルのリストを取得
-txt_files = glob.glob(txt_pattern)
-jpg_files = glob.glob(jpg_pattern)
-png_files = glob.glob(png_pattern)
+# 処理対象のディレクトリを取得
+os.chdir(args.target_dir)
 
-# テキストファイルと画像ファイルを名前で比較し、片方しかない場合は削除する
-for txt in txt_files:
-    # テキストファイルの名前を取得
-    text_name = os.path.splitext(txt)[0]
-    # 同じ名前の画像ファイルがあるか確認
-    if not any(image_name == text_name for image_name in jpg_files or png_files):
-        # 同じ名前の画像ファイルがない場合は、削除するかどうか確認する
-        response = input(f"{txt} のみがあります。削除しますか？ [y/n]: ")
-        if response == "y":
-            os.remove(txt)
+# ファイルのリストを取得
+files = list(os.path.splitext(os.path.basename(file))[0] for file in glob.glob("*"))
 
-for jpg in jpg_files:
-    # 画像ファイルの名前を取得
-    image_name = os.path.splitext(jpg)[0]
-    # 同じ名前のテキストファイルがあるか確認
-    if not any(text_name == image_name for text_name in txt_files):
-        # 同じ名前のテキストファイルがない場合は、削除するかどうか確認する
-        response = input(f"{jpg} のみがあります。削除しますか？ [y/n]: ")
-        if response == "y":
-            os.remove(jpg)
-
-for png in png_files:
-    # 画像ファイルの名前を取得
-    image_name = os.path.splitext(png)[0]
-    # 同じ名前のテキストファイルがあるか確認
-    if not any(text_name == image_name for text_name in txt_files):
-        # 同じ名前のテキストファイルがない場合は、削除するかどうか確認する
-        response = input(f"{png} のみがあります。削除しますか？ [y/n]: ")
-        if response == "y":
-            os.remove(png)
+# 名前が重複していないファイルを削除
+for file in files:
+    if files.count(file) < 2:
+        try:
+            os.remove(file + ".jpg")
+            print(f"削除: {file}.jpg")
+        except:
+            pass
+        try:
+            os.remove(file + ".png")
+            print(f"削除: {file}.png")
+        except:
+            pass
+        try:
+            os.remove(file + ".txt")
+            print(f"削除: {file}.txt")
+        except:
+            pass
 
 print("終了")
