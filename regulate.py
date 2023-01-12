@@ -20,5 +20,7 @@ if len(diff_files) != 0:
     for file in diff_files:
         print(f"削除: {file}")
         os.remove(os.path.join(args.input_dir, file))
+        print(f"削除: {os.path.splitext(file)[0] + '.txt'}")
+        os.remove(os.path.join(args.output_dir, os.path.splitext(file)[0] + ".txt"))
 
 print("終了")
